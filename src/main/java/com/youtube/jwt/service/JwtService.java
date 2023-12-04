@@ -1,9 +1,9 @@
 package com.youtube.jwt.service;
 
-import com.youtube.jwt.dao.UserDao;
 import com.youtube.jwt.entity.JwtRequest;
 import com.youtube.jwt.entity.JwtResponse;
 import com.youtube.jwt.entity.User;
+import com.youtube.jwt.repo.UserRepository;
 import com.youtube.jwt.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -26,7 +27,7 @@ public class JwtService implements UserDetailsService {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private UserDao userDao;
+    private UserRepository userRepo;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -38,24 +39,27 @@ public class JwtService implements UserDetailsService {
 
         UserDetails userDetails = loadUserByUsername(userName);
         String newGeneratedToken = jwtUtil.generateToken(userDetails);
+        
+        System.out.println("------------------------------");
         System.out.println(newGeneratedToken);
 
-        User user = userDao.findById(userName).get();
+        User user = userRepo.findByUserName(userName);
         return new JwtResponse(user, newGeneratedToken);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userDao.findById(username).get();
-
-        if (user != null) {
+        try{
+        	User user = userRepo.findByUserName(username);
+        
             return new org.springframework.security.core.userdetails.User(
                     user.getUserName(),
                     user.getUserPassword(),
                     getAuthority(user)
             );
-        } else {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+        catch(Exception e) {
+        	throw new UsernameNotFoundException("User not found with username: " + username);
         }
     }
 

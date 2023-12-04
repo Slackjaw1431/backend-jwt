@@ -32,7 +32,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 		final String requestTokenHeader = request.getHeader("Authorization");
 
-		String username = null;
+		String userName = null;
 		String jwtToken = null;
 
 //        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
@@ -47,7 +47,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 //        } else {
 //            System.out.println("JWT token does not start with Bearer");
 //        }
-
+//
 //		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 //			username = jwtUtil.getUsernameFromToken(jwtToken);
 //
