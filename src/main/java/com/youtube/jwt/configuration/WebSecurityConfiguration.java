@@ -40,16 +40,18 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors();
         httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers("/authenticate", "/registerNewUser","/admin/allUsers").permitAll()
+                .authorizeRequests()
+                .antMatchers("/authenticate", "/registerNewUser").permitAll()
+//                .antMatchers("/admin/**").hasAuthority("Admin")
+//                .antMatchers("/user/**").hasAuthority("User")
+//                .antMatchers("/admin/**").hasRole("Admin")
+//                .antMatchers("/user/**").hasRole("User")
                 .antMatchers(HttpHeaders.ALLOW).permitAll()
-//                .antMatchers("/admin/**").hasRole("ADMIN") // Require 'ADMIN' role for '/admin/**' endpoints
-//                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN") // Require 'USER' or 'MANAGER' role for '/user/**' endpoints
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        ;
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }

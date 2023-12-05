@@ -5,11 +5,17 @@ import com.youtube.jwt.entity.JwtResponse;
 import com.youtube.jwt.entity.User;
 import com.youtube.jwt.repo.UserRepository;
 import com.youtube.jwt.util.JwtUtil;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService implements UserDetailsService {
@@ -38,10 +45,13 @@ public class JwtService implements UserDetailsService {
         authenticate(userName, userPassword);
 
         UserDetails userDetails = loadUserByUsername(userName);
+        Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
+        claims.put("role", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+        
         String newGeneratedToken = jwtUtil.generateToken(userDetails);
         
-        System.out.println("------------------------------");
-        System.out.println(newGeneratedToken);
+//        System.out.println("------------------------------");
+//        System.out.println(newGeneratedToken);
 
         User user = userRepo.findByUserName(userName);
         return new JwtResponse(user, newGeneratedToken);

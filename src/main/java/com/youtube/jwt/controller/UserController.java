@@ -42,51 +42,48 @@ public class UserController {
 	}
 
 	@DeleteMapping({ "/deleteUser" })
-//	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('Admin')")
 	public void deleteUser(@RequestBody User user) {
 		userService.deleteUser(user);
 	}
 	
-	@GetMapping({"/admin/allUsers"})
-//	@PreAuthorize("hasRole('Admin')")
+	@GetMapping({"/allUsers"})
+	@PreAuthorize("hasRole('Admin')")
 	public List<User> getAllUsers(){
 		return userService.fetchUsers();
 	}
 
-	@DeleteMapping({"admin/deleteUser/{userName}"})
-	@PreAuthorize("hasRole('ADMIN')")
+	@DeleteMapping({"/deleteUser/{userName}"})
+	@PreAuthorize("hasRole('Admin')")
 	public void deleteUserByUserName(@PathVariable String userName) {
 		User user = userService.get(userName);
 		userService.deleteUser(user);
 		userRepo.delete(user);
-//		try{
-//		}
-//		catch(Exception e) {
-//			System.out.println("User not found");
-//		} 
 	}
 
-	@GetMapping("/users/{id}")
+	@GetMapping("/userById/{id}")
 	public ResponseEntity<Optional<User>> getUserById(@PathVariable Long id) {
 		Optional<User> user = userService.get(id);
 		return ResponseEntity.ok(user);
 	}
 
 	@PutMapping({ "/updateUser" })
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('Admin')")
 	public void updateUser(@RequestBody User user) {
 		userService.updateUser(user);
 	}
 
 	@GetMapping({ "/forAdmin" })
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('Admin')")
 	public String forAdmin() {
+		System.out.println("For Admin");
 		return "This URL is only accessible to the admin";
 	}
 
 	@GetMapping({ "/forUser" })
-	@PreAuthorize("hasRole('USER')")
+	@PreAuthorize("hasRole('User')")
 	public String forUser() {
+		System.out.println("For User");
 		return "This URL is only accessible to the user";
 	}
 
