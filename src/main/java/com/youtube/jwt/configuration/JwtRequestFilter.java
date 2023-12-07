@@ -37,21 +37,20 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 		if (requestTokenHeader != null) {
 			jwtToken = requestTokenHeader.substring(7);
-            System.out.println("-------------");
-        	System.out.println(jwtToken);
+//			System.out.println("-------------");
+//			System.out.println(jwtToken);
 
-			try{
+			try {
 				username = jwtUtil.getUsernameFromToken(jwtToken);
-			}
-			catch(Exception e) {
-				System.out.println("User does not exist. Has been created");
+			} catch (Exception e) {
+//				System.out.println("No specific User");
 				username = null;
 				jwtToken = null;
 			}
 
 		}
 
-		if (username != null ) {
+		if (username != null) {
 
 			UserDetails userDetails = jwtService.loadUserByUsername(username);
 

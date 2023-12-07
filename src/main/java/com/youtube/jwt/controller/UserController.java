@@ -58,7 +58,7 @@ public class UserController {
 	public void deleteUserByUserName(@PathVariable String userName) {
 		User user = userService.get(userName);
 		userService.deleteUser(user);
-		userRepo.delete(user);
+//		userRepo.delete(user);
 	}
 
 	@GetMapping("/userById/{id}")
