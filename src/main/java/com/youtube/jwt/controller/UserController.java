@@ -6,6 +6,8 @@ import java.util.Optional;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -51,6 +53,12 @@ public class UserController {
 	@PreAuthorize("hasRole('Admin')")
 	public List<User> getAllUsers(){
 		return userService.fetchUsers();
+	}
+	
+	@GetMapping({"/allUsersPage"})
+	@PreAuthorize("hasRole('Admin')")
+	public Page<User> getAllUsersPage(Pageable pageable){
+		return userRepo.findAll(pageable);
 	}
 
 	@DeleteMapping({"/deleteUser/{userName}"})
